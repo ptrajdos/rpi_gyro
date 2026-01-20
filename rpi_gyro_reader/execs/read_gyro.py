@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 import time
 
 I2C_BUS = 1
-BMI160_ADDR = 0x68
+BMI160_ADDR = 0x69
 INT_PIN = 17
 
 bus = smbus2.SMBus(I2C_BUS)
