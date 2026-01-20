@@ -6,7 +6,7 @@ import time
 
 def main():
     imu = VirtualIMU()
-    pub = IMUPublisher(imu=imu, address="localhost", delay=0.01)
+    pub = IMUPublisher(imu=imu, address="*", delay=0.01)
     print("Publishing...")
     
     try:
