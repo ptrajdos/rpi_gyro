@@ -33,6 +33,7 @@ classifiers = [
 rpi = [
     "RPi.GPIO>=0.7.1",
     "smbus2>=0.6.0",
+    "BMI160-i2c>=0.6",
 ]
 
 [tool.setuptools.dynamic]
