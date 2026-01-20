@@ -36,6 +36,19 @@ rpi = [
     "BMI160-i2c>=0.6",
 ]
 
+test = [
+    'coverage==7.8.0',
+    'unittest-parallel==1.5.3',
+    'pandas>=2.0.0',
+    'pdoc3==0.11.1',
+    'pytest==8.3.5',
+    'pytest-cov==6.1.1',
+    'pytest-profiling==1.8.1',
+    'pytest-xdist==3.6.1',
+    'snakeviz==2.2.2',
+    'pytest-timer==1.0.0',
+]
+
 [tool.setuptools.dynamic]
 version = {attr = "rpi_gyro_reader.__version__"}  # any module attribute compatible with ast.literal_eval
 readme = {file = ["README.md"]}
