@@ -23,7 +23,7 @@ description = "reading gyro with rpi"
 
 license = "BSD-3-Clause"
 license-files = ["LICEN[CS]E.*"]
-keywords = ["emg"]
+keywords = ["BMI160 gyro"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Programming Language :: Python"
@@ -31,7 +31,7 @@ classifiers = [
 
 [project.optional-dependencies]
 rpi = [
-    "Pi.GPIO>=0.7.1",
+    "RPi.GPIO>=0.7.1",
     "smbus2>=0.6.0",
 ]
 
