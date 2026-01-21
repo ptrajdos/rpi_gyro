@@ -28,11 +28,15 @@ class ITransformerTest(unittest.TestCase):
         for transformer_name, transformer in transformers.items():
             for R, C in sizes:
                 with self.subTest(transformer_name=transformer_name, R=R, C=C):
+                    t_data = self.generate_sample_data(R, C)
                     data = self.generate_sample_data(R, C)
+                    
+                    transformer.fit(t_data)
 
                     for row in data:
                         filtered_row = transformer.transform_sample(row)
                         self.assertIsNotNone(filtered_row)
+                        self.assertTrue(len(filtered_row) >0 , "Empty filtered")
                         self.assertFalse(
                             np.any(np.isnan(filtered_row)), "Nans in filtered"
                         )

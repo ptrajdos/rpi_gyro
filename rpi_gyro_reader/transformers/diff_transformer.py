@@ -8,6 +8,8 @@ class DiffTransformer(ITransformer):
 
         self.last_vec = None
 
+    def fit(self, X):
+        return super().fit(X)
 
     def transform_sample(self, vec):
         if self.last_vec is None:

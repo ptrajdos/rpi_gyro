@@ -9,6 +9,9 @@ class AVTransformer(ITransformer):
 
         self.corrections = None
 
+    def fit(self, X):
+        return super().fit(X)
+
 
     def transform_sample(self, vec):
         if self.corrections is None:
