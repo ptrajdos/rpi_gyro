@@ -4,14 +4,18 @@ from rpi_gyro_reader.gyro.iimu import IMU
 
 class VirtualIMU(IMU):
     """Simulates a moving IMU for testing"""
-    def __init__(self):
+    def __init__(self, dt = 0.01):
         self.t = 0.0
+        self.dt = dt
+
 
     def read_accel(self):
         # Simulate simple oscillating motion + gravity
         ax = 2.0 * math.sin(self.t)
         ay = 0.5 * math.cos(self.t)
         az = 9.81 + 0.2 * math.sin(self.t/2)  # gravity + small vertical motion
+
+        self.t += self.dt
         return ax, ay, az
 
     def read_gyro(self):
@@ -19,7 +23,7 @@ class VirtualIMU(IMU):
         gx = 10.0 * math.sin(self.t/3)
         gy = 5.0 * math.cos(self.t/4)
         gz = 2.0 * math.sin(self.t/5)
-        self.t += 0.01
+        self.t += self.dt
         return gx, gy, gz
     
     def read_motion(self):
@@ -29,6 +33,6 @@ class VirtualIMU(IMU):
         gx = 10.0 * math.sin(self.t/3)
         gy = 5.0 * math.cos(self.t/4)
         gz = 2.0 * math.sin(self.t/5)
-        self.t += 0.01
+        self.t += self.dt
 
         return (ax, ay, az, gx, gy, gz)
