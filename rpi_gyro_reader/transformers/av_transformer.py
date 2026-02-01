@@ -2,6 +2,10 @@ from rpi_gyro_reader.transformers.itransformer import ITransformer
 import numpy as np
 
 class AVTransformer(ITransformer):
+    """
+    Attenuates the average value from the input signal.
+    Useful to remove slow drift from gyroscope or accelerometer data.
+    """
 
     def __init__(self, alpha=0.5):
         super().__init__()

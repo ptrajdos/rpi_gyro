@@ -2,6 +2,9 @@ from rpi_gyro_reader.transformers.itransformer import ITransformer
 
 
 class DiffTransformer(ITransformer):
+    """
+    Computes the difference between the current and the last sample.
+    """
 
     def __init__(self):
         super().__init__()

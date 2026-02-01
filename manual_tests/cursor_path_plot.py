@@ -1,15 +1,18 @@
 import numpy as np
 from rpi_gyro_reader.gyro.accel_circle_imu import AccelCircleIMU
+from rpi_gyro_reader.transformers.av_transformer import AVTransformer
 from rpi_gyro_reader.transformers.cursor_movers.acc_velocity_mover import AccVelocityMover
 
 from matplotlib import pyplot as plt
 import pyautogui
 from matplotlib.backends.backend_pdf import PdfPages
 import pandas as pd
+import time
 
 def main():
     n_samples = 1000
     imu = AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
+    av_trans = AVTransformer(alpha=0.9)
     vel_mover = AccVelocityMover(dt=1.0, alpha=0.9, threshold=0.05)
 
     accs = []
@@ -29,10 +32,13 @@ def main():
     while True:
         try:
             vec = imu.read_accel()
+            #FIXME: something odd is happening with AVTransformer
+            # vec = av_trans.transform_sample(np.asanyarray(vec)) 
             accs.append(vec[0:2])
             delta = vel_mover.transform_sample(vec)
             delta*=delta_pix
             # pyautogui.moveRel(delta[0], delta[1], duration=0.001)
+            time.sleep(0.01)
             last_pos += delta
             deltas.append(delta.copy())
             positions.append(last_pos.copy())
