@@ -33,7 +33,7 @@ class AccelCircleIMU(IMU):
         return gx, gy, gz
 
     def read_motion(self):
-        ax, ay, az  = self.read_gyro()
+        ax, ay, az  = self.read_accel()
         
         gx = 0
         gy = 0
