@@ -8,21 +8,27 @@ import numpy as np
 from rpi_gyro_reader.gyro.accel_circle_imu import AccelCircleIMU
 from rpi_gyro_reader.gyro.imu_receiver import IMUReceiver
 from rpi_gyro_reader.transformers.av_transformer import AVTransformer
+from rpi_gyro_reader.transformers.cursor_movers.acc_velocity_mover import AccVelocityMover
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
-CHANNELS = 6
+CHANNELS = 2
 MAX_POINTS = 200
 UPDATE_MS = 10
+W,H = 300,300
 
 imu = IMUReceiver(address="raspberry") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
+vel_mover = AccVelocityMover(dt=1.0, alpha=0.9, threshold=0.05)
+delta_pix = 1
 
 def generate_sample():
     v = imu.read_motion()
     v = av_trans.transform_sample(np.asanyarray(v))
-    return v
+    delta = vel_mover.transform_sample(np.asanyarray(v))
+    delta*=delta_pix
+    return delta
 
 y_limits = (-5,5)
 
@@ -39,30 +45,30 @@ class RealtimePlotApp:
 
         # Figure
         self.fig = Figure(figsize=(8, 10), dpi=100)
-        self.axes = self.fig.subplots(CHANNELS, 1, sharex=True)
+        self.axes = self.fig.subplots()
+        self.axes.set_xlim(0, W)
+        self.axes.set_ylim(0, H)
 
         # Lines
         self.lines = []
-        for i, ax in enumerate(self.axes):
-            ax.set_xlim(0, MAX_POINTS)
-            ax.set_ylim(y_limits[0], y_limits[1])
-            ax.grid(True)
-            ax.set_ylabel(f"CH {i+1}")
+        
 
-            line, = ax.plot([], [])
-            self.lines.append(line)
-
-        self.axes[-1].set_xlabel("Samples")
+        self.line, = self.axes.plot([], [])
+        
 
         # Canvas
         self.canvas = FigureCanvasTkAgg(self.fig, master=root)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        self.x_pos, self.y_pos = W/2, H/2
 
         self.update_plot()
 
     def update_buffers(self, sample):
-        for i, value in enumerate(sample):
-            self.buffers[i].append(value)
+        ax, ay = sample[0], sample[1]
+        self.x_pos += ax
+        self.y_pos += ay
+        self.buffers[0].append(self.x_pos)
+        self.buffers[1].append(self.y_pos)
 
     def update_plot(self):
         sample = generate_sample()
@@ -70,8 +76,7 @@ class RealtimePlotApp:
 
         x = range(MAX_POINTS)
 
-        for i, line in enumerate(self.lines):
-            line.set_data(x, list(self.buffers[i]))
+        self.line.set_data(self.buffers[0], self.buffers[1])
 
         self.canvas.draw_idle()
         self.root.after(UPDATE_MS, self.update_plot)
