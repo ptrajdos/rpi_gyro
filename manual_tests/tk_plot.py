@@ -3,23 +3,28 @@ from collections import deque
 import random
 
 import matplotlib
+import numpy as np
 
 from rpi_gyro_reader.gyro.accel_circle_imu import AccelCircleIMU
+from rpi_gyro_reader.gyro.imu_receiver import IMUReceiver
+from rpi_gyro_reader.transformers.av_transformer import AVTransformer
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 CHANNELS = 6
 MAX_POINTS = 200
-UPDATE_MS = 50
+UPDATE_MS = 10
 
 imu = AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
+av_trans = AVTransformer(alpha=0.9)
 
 def generate_sample():
     v = imu.read_motion()
-    # print(f"Generated sample: {v}")
+    v = av_trans.transform_sample(np.asanyarray(v))
     return v
 
+y_limits = (-5,5)
 
 class RealtimePlotApp:
     def __init__(self, root):
@@ -40,7 +45,7 @@ class RealtimePlotApp:
         self.lines = []
         for i, ax in enumerate(self.axes):
             ax.set_xlim(0, MAX_POINTS)
-            ax.set_ylim(-1.5, 1.5)
+            ax.set_ylim(y_limits[0], y_limits[1])
             ax.grid(True)
             ax.set_ylabel(f"CH {i+1}")
 
