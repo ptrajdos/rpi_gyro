@@ -20,7 +20,7 @@ W,H = 300,300
 
 imu = IMUReceiver(address="raspberry") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
-vel_mover = AccVelocityMover(dt=1.0, alpha=0.9, threshold=0.05)
+vel_mover = AccVelocityMover(dt=1.0, alpha=0.7, threshold=0.4)
 delta_pix = 1
 
 def generate_sample():
@@ -28,7 +28,8 @@ def generate_sample():
     v = av_trans.transform_sample(np.asanyarray(v))
     delta = vel_mover.transform_sample(np.asanyarray(v))
     delta*=delta_pix
-    return delta
+    print(f"Generated sample: {delta}")
+    return delta[0:2]
 
 y_limits = (-5,5)
 
@@ -67,6 +68,10 @@ class RealtimePlotApp:
         ax, ay = sample[0], sample[1]
         self.x_pos += ax
         self.y_pos += ay
+
+        self.x_pos = max(0, min(W, self.x_pos))
+        self.y_pos = max(0, min(H, self.y_pos))
+
         self.buffers[0].append(self.x_pos)
         self.buffers[1].append(self.y_pos)
 
