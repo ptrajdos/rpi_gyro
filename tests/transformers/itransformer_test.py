@@ -23,7 +23,7 @@ class ITransformerTest(unittest.TestCase):
     def test_basic(self):
         transformers = self.get_transformers()
 
-        sizes = ((10, 6), (10, 1), (1, 10))
+        sizes = ((10, 6), (10, 3), (10,9), (1, 10))
 
         for transformer_name, transformer in transformers.items():
             for R, C in sizes:

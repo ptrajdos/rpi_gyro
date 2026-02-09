@@ -10,6 +10,7 @@ from rpi_gyro_reader.gyro.accel_circle_imu import AccelCircleIMU
 from rpi_gyro_reader.gyro.imu_receiver import IMUReceiver
 from rpi_gyro_reader.transformers.av_transformer import AVTransformer
 from rpi_gyro_reader.transformers.cursor_movers.acc_velocity_mover import AccVelocityMover
+from rpi_gyro_reader.transformers.madgwick_transformer import MadgwickTransformer
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -21,12 +22,14 @@ W,H = 300,300
 
 imu = IMUReceiver(address="localhost") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
+madg_trans = MadgwickTransformer()
 vel_mover = AccVelocityMover(dt=1.0, alpha=0.7, threshold=0.4)
-delta_pix = 1
+delta_pix = 0.5
 
 def generate_sample():
     v = imu.read_motion()
-    v = av_trans.transform_sample(np.asanyarray(v))
+    # v = av_trans.transform_sample(np.asanyarray(v))
+    v = madg_trans.transform_sample(v)
     delta = vel_mover.transform_sample(np.asanyarray(v))
     delta*=delta_pix
     print(f"Generated sample: {delta}")

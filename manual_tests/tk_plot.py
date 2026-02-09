@@ -9,6 +9,7 @@ import numpy as np
 from rpi_gyro_reader.gyro.accel_circle_imu import AccelCircleIMU
 from rpi_gyro_reader.gyro.imu_receiver import IMUReceiver
 from rpi_gyro_reader.transformers.av_transformer import AVTransformer
+from rpi_gyro_reader.transformers.madgwick_transformer import MadgwickTransformer
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -19,10 +20,12 @@ UPDATE_MS = 10
 
 imu = IMUReceiver(address="localhost") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
+madg_trans = MadgwickTransformer()
 
 def generate_sample():
     v = imu.read_motion()
-    v = av_trans.transform_sample(np.asanyarray(v))
+    # v = av_trans.transform_sample(np.asanyarray(v))
+    v = madg_trans.transform_sample(v)
     return v
 
 y_limits = (-10,10)

@@ -13,3 +13,4 @@ TODO Notes:
   - [ ] Moving cursor with linear accelarations -- It poses a problem
     - [ ] Accaleartion in one direction is followed by stop of movement that creates opposite acceleration. Thats why we usually use angle accelarations to drive mouse pointer.
     - [ ]
+- [X] Madgwick filter
