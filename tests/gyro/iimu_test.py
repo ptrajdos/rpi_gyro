@@ -40,9 +40,19 @@ class IMUTest(unittest.TestCase):
     def test_imu_m(self):
         imu = self.get_imu()
 
+        vals = imu.read_mag()
+
+        self.assertTrue(len(vals) == 3, "Wrong length of returned array")
+        self.assertTrue(isinstance(vals, np.ndarray), "Returned value is not a numpy array")
+        self.assertFalse(np.any(np.isnan(vals)), "Nans in result")
+        self.assertFalse(np.any(np.isinf(vals)), "Infs in result")
+
+    def test_imu_motion(self):
+        imu = self.get_imu()
+
         vals = imu.read_motion()
 
-        self.assertTrue(len(vals) == 6, "Wrong length of returned array")
+        self.assertTrue(len(vals) == 9, "Wrong length of returned array")
         self.assertTrue(isinstance(vals, np.ndarray), "Returned value is not a numpy array")
         self.assertFalse(np.any(np.isnan(vals)), "Nans in result")
         self.assertFalse(np.any(np.isinf(vals)), "Infs in result")

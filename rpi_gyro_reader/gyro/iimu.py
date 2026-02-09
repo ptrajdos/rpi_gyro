@@ -1,7 +1,6 @@
 import abc
 import numpy as np
 class IMU(abc.ABC):
-    #TODO return numpy array instead of tuple?
     @abc.abstractmethod
     def read_accel(self) -> np.ndarray:
         """Return X, Y, Z acceleration (m/s²)"""
@@ -12,7 +11,10 @@ class IMU(abc.ABC):
         """Return X, Y, Z rotation (deg/s)"""
         pass
 
-    #TODO read magnetometer?
+    @abc.abstractmethod
+    def read_mag(self) -> np.ndarray:
+        """Return X, Y, Z magnetic field (uT)"""
+        pass
 
     @abc.abstractmethod
     def read_motion(self) -> np.ndarray:
@@ -20,6 +22,6 @@ class IMU(abc.ABC):
 
         Returns:
         Numpy array with values
-        [aX, aY, aZ, gX, gY, gZ]
+        [aX, aY, aZ, gX, gY, gZ, mX, mY, mZ]
         """
         pass

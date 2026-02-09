@@ -36,6 +36,10 @@ class IMUBMI160(IMU):
         mode = self.sensor.getFullScaleGyroRange()
         gx, gy, gz = rgx / BMI160_GYR_LSB_PER_DPS[mode], rgy / BMI160_GYR_LSB_PER_DPS[mode], rgz / BMI160_GYR_LSB_PER_DPS[mode]
         return np.array([gx, gy, gz])
+    
+    def read_mag(self) -> np.ndarray:
+        # BMI160 does not have a magnetometer, return zeros
+        return np.array([0.0, 0.0, 0.0])
 
     def read_motion(self) -> np.ndarray:
         rgx, rgy, rgz, rax, ray, raz = self.sensor.getMotion6()
@@ -43,9 +47,10 @@ class IMUBMI160(IMU):
         mode_a = self.sensor.getFullScaleAccelRange()
         gx, gy, gz = rgx / BMI160_GYR_LSB_PER_DPS[mode_g], rgy / BMI160_GYR_LSB_PER_DPS[mode_g], rgz / BMI160_GYR_LSB_PER_DPS[mode_g]
         ax, ay, az = rax / BMI160_ACC_LSB_PER_G[mode_a], ray / BMI160_ACC_LSB_PER_G[mode_a], raz / BMI160_ACC_LSB_PER_G[mode_a]
+        mx, my, mz = 0.0, 0.0, 0.0  # No magnetometer
 
         ax*=9.80665
         ay*=9.80665
         az*=9.80665
 
-        return np.array([ax, ay, az, gx, gy, gz])
+        return np.array([ax, ay, az, gx, gy, gz, mx, my, mz])

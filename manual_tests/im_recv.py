@@ -11,9 +11,9 @@ def main():
     try:
         while True:
             vec = rcv.read_motion()
-            axt, ayt, azt, gxt, gyt, gzt = trans.transform_sample(vec)
-            print(f"R: {vec[0]}, {vec[1]}, {vec[2]}, {vec[3]}, {vec[4]}, {vec[5]}")
-            print(f"T: {axt}, {ayt}, {azt}, {gxt}, {gyt}, {gzt}")
+            axt, ayt, azt, gxt, gyt, gzt, mxt, myt, mzt = trans.transform_sample(vec)
+            print(f"R: {vec[0]:.4f}, {vec[1]:.4f}, {vec[2]:.4f}, {vec[3]:.4f}, {vec[4]:.4f}, {vec[5]:.4f}, {vec[6]:.4f}, {vec[7]:.4f}, {vec[8]:.4f}")
+            print(f"T: {axt:.4f}, {ayt:.4f}, {azt:.4f}, {gxt:.4f}, {gyt:.4f}, {gzt:.4f}, {mxt:.4f}, {myt:.4f}, {mzt:.4f}")
             time.sleep(1)
     except KeyboardInterrupt:
         rcv.stop()

@@ -62,7 +62,7 @@ class RealtimePlotApp:
         self.update_plot()
 
     def update_buffers(self, sample):
-        for i, value in enumerate(sample):
+        for i, value in enumerate(sample[0:CHANNELS]):
             self.buffers[i].append(value)
 
     def update_plot(self):

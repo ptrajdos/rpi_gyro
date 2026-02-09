@@ -13,7 +13,10 @@ class IMUReceiver(IMU):
         self.port = port
         self.timeout = timeout
 
-        self.ax, self.ay, self.az, self.gx, self.gy, self.gz = (
+        self.ax, self.ay, self.az, self.gx, self.gy, self.gz, self.mx, self.my, self.mz = (
+            0.0,
+            0.0,
+            0.0,
             0.0,
             0.0,
             0.0,
@@ -24,7 +27,6 @@ class IMUReceiver(IMU):
 
         self._init_context()
         self._init_thread()
-
 
     def _init_context(self):
         self.context = zmq.Context()
@@ -38,9 +40,17 @@ class IMUReceiver(IMU):
         while self._is_thread_running:
             try:
                 payload = self.sub_socket.recv()
-                self.ax, self.ay, self.az, self.gx, self.gy, self.gz = struct.unpack(
-                    "<ffffff", payload
-                )
+                (
+                    self.ax,
+                    self.ay,
+                    self.az,
+                    self.gx,
+                    self.gy,
+                    self.gz,
+                    self.mx,
+                    self.my,
+                    self.mz,
+                ) = struct.unpack("<fffffffff", payload)
             except zmq.Again:
                 pass
             except Exception as ex:
@@ -58,7 +68,22 @@ class IMUReceiver(IMU):
         return np.array([self.gx, self.gy, self.gz])
 
     def read_motion(self):
-        return np.array([self.ax, self.ay, self.az, self.gx, self.gy, self.gz])
+        return np.array(
+            [
+                self.ax,
+                self.ay,
+                self.az,
+                self.gx,
+                self.gy,
+                self.gz,
+                self.mx,
+                self.my,
+                self.mz,
+            ]
+        )
+
+    def read_mag(self):
+        return np.array([self.mx, self.my, self.mz])
 
     def stop(self):
         self._is_thread_running = False
