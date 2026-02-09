@@ -2,7 +2,7 @@ import math
 
 import numpy as np
 from rpi_gyro_reader.gyro.iimu import IMU
-
+import numpy as np
 
 class AccelCircleIMU(IMU):
     """Simulates a moving IMU for testing"""
@@ -22,7 +22,7 @@ class AccelCircleIMU(IMU):
         az = 0
 
         self.t += self.dt
-        return ax, ay, az
+        return np.array([ax, ay, az])
 
     def read_gyro(self):
         # Simulate slow rotation
@@ -30,7 +30,7 @@ class AccelCircleIMU(IMU):
         gy = 0
         gz = 0
         self.t += 0.01
-        return gx, gy, gz
+        return np.array([gx, gy, gz])
 
     def read_motion(self):
         ax, ay, az  = self.read_accel()
@@ -40,4 +40,4 @@ class AccelCircleIMU(IMU):
         gz = 0
         
 
-        return (ax, ay, az, gx, gy, gz)
+        return np.array([ax, ay, az, gx, gy, gz])

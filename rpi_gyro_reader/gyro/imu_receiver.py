@@ -1,4 +1,5 @@
 import struct
+import numpy as np
 import zmq
 from rpi_gyro_reader.gyro.iimu import IMU
 import threading as th
@@ -51,13 +52,13 @@ class IMUReceiver(IMU):
         self._thread.start()
 
     def read_accel(self):
-        return (self.ax, self.ay, self.az)
+        return np.array([self.ax, self.ay, self.az])
 
     def read_gyro(self):
-        return (self.gx, self.gy, self.gz)
+        return np.array([self.gx, self.gy, self.gz])
 
     def read_motion(self):
-        return (self.ax, self.ay, self.az, self.gx, self.gy, self.gz)
+        return np.array([self.ax, self.ay, self.az, self.gx, self.gy, self.gz])
 
     def stop(self):
         self._is_thread_running = False

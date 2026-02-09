@@ -13,8 +13,9 @@ def main():
     try:
         while True:
             # Read accelerometer and gyro (6 axes)
-            gx, gy, gz, ax, ay, az = sensor.getMotion6()
-
+            motion = sensor.getMotion6()
+            ax, ay, az, gx, gy, gz = motion
+    
             # Print readings
             print(f"A: {ax:6d} {ay:6d} {az:6d} | G: {gx:6d} {gy:6d} {gz:6d}")
 

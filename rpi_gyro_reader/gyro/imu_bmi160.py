@@ -1,5 +1,6 @@
 from BMI160_i2c import Driver
 from rpi_gyro_reader.gyro.iimu import IMU
+import numpy as np
 
 BMI160_ACC_LSB_PER_G = {
     0x03: 16384,  # ±2g
@@ -28,15 +29,15 @@ class IMUBMI160(IMU):
         ax*=9.80665
         ay*=9.80665
         az*=9.80665
-        return float(ax), float(ay), float(az)
+        return np.array([ax, ay, az])
 
-    def read_gyro(self) -> tuple[float, float, float]:
+    def read_gyro(self) -> np.ndarray:
         rgx, rgy, rgz, _, _, _ = self.sensor.getMotion6()
         mode = self.sensor.getFullScaleGyroRange()
         gx, gy, gz = rgx / BMI160_GYR_LSB_PER_DPS[mode], rgy / BMI160_GYR_LSB_PER_DPS[mode], rgz / BMI160_GYR_LSB_PER_DPS[mode]
-        return float(gx), float(gy), float(gz)
+        return np.array([gx, gy, gz])
 
-    def read_motion(self) -> tuple[float, float, float, float, float, float]:
+    def read_motion(self) -> np.ndarray:
         rgx, rgy, rgz, rax, ray, raz = self.sensor.getMotion6()
         mode_g = self.sensor.getFullScaleGyroRange()
         mode_a = self.sensor.getFullScaleAccelRange()
@@ -47,4 +48,4 @@ class IMUBMI160(IMU):
         ay*=9.80665
         az*=9.80665
 
-        return float(ax), float(ay), float(az), float(gx), float(gy), float(gz)
+        return np.array([ax, ay, az, gx, gy, gz])

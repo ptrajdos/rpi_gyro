@@ -22,7 +22,8 @@ class IMUTest(unittest.TestCase):
 
         vals = imu.read_accel()
 
-        self.assertTrue(len(vals) == 3, "Wrong length of returned tuple")
+        self.assertTrue(len(vals) == 3, "Wrong length of returned array")
+        self.assertTrue(isinstance(vals, np.ndarray), "Returned value is not a numpy array")
         self.assertFalse(np.any(np.isnan(vals)), "Nans in result")
         self.assertFalse(np.any(np.isinf(vals)), "Infs in result")
 
@@ -31,7 +32,8 @@ class IMUTest(unittest.TestCase):
 
         vals = imu.read_gyro()
 
-        self.assertTrue(len(vals) == 3, "Wrong length of returned tuple")
+        self.assertTrue(len(vals) == 3, "Wrong length of returned array")
+        self.assertTrue(isinstance(vals, np.ndarray), "Returned value is not a numpy array")
         self.assertFalse(np.any(np.isnan(vals)), "Nans in result")
         self.assertFalse(np.any(np.isinf(vals)), "Infs in result")
 
@@ -40,7 +42,8 @@ class IMUTest(unittest.TestCase):
 
         vals = imu.read_motion()
 
-        self.assertTrue(len(vals) == 6, "Wrong length of returned tuple")
+        self.assertTrue(len(vals) == 6, "Wrong length of returned array")
+        self.assertTrue(isinstance(vals, np.ndarray), "Returned value is not a numpy array")
         self.assertFalse(np.any(np.isnan(vals)), "Nans in result")
         self.assertFalse(np.any(np.isinf(vals)), "Infs in result")
 

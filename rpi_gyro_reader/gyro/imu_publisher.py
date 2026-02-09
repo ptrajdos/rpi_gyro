@@ -28,7 +28,8 @@ class IMUPublisher:
 
     def _runner(self):
         while self._is_thread_running:
-            ax, ay, az, gx, gy, gz = self.imu.read_motion()
+            motion = self.imu.read_motion()
+            ax, ay, az, gx, gy, gz = motion
             payload = struct.pack("<ffffff", ax, ay, az, gx, gy, gz)
             self.publish_socket.send(payload)
             time.sleep(self.delay)

@@ -24,7 +24,7 @@ def generate_sample():
     v = av_trans.transform_sample(np.asanyarray(v))
     return v
 
-y_limits = (-5,5)
+y_limits = (-10,10)
 
 class RealtimePlotApp:
     def __init__(self, root):
