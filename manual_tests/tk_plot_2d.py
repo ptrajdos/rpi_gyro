@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import tkinter as tk
 from collections import deque
 import random
@@ -18,7 +19,7 @@ MAX_POINTS = 200
 UPDATE_MS = 10
 W,H = 300,300
 
-imu = IMUReceiver(address="raspberry") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
+imu = IMUReceiver(address="localhost") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
 vel_mover = AccVelocityMover(dt=1.0, alpha=0.7, threshold=0.4)
 delta_pix = 1

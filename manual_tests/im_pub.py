@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python
 from rpi_gyro_reader.gyro.imu_publisher import IMUPublisher
 from rpi_gyro_reader.gyro.virtualimu import VirtualIMU
 import time
