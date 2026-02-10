@@ -18,14 +18,14 @@ CHANNELS = 6
 MAX_POINTS = 200
 UPDATE_MS = 10
 
-imu = IMUReceiver(address="localhost") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
+imu = IMUReceiver(address="raspberry") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
 madg_trans = MadgwickTransformer()
 
 def generate_sample():
     v = imu.read_motion()
-    # v = av_trans.transform_sample(np.asanyarray(v))
-    v = madg_trans.transform_sample(v)
+    v = av_trans.transform_sample(np.asanyarray(v))
+    # v = madg_trans.transform_sample(v)
     return v
 
 y_limits = (-10,10)
