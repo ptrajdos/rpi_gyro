@@ -24,8 +24,8 @@ madg_trans = MadgwickTransformer()
 
 def generate_sample():
     v = imu.read_motion()
-    v = av_trans.transform_sample(np.asanyarray(v))
-    # v = madg_trans.transform_sample(v)
+    # v = av_trans.transform_sample(np.asanyarray(v))
+    v = madg_trans.transform_sample(v)
     return v
 
 y_limits = (-10,10)
