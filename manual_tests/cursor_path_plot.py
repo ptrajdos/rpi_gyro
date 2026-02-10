@@ -10,16 +10,21 @@ from matplotlib.backends.backend_pdf import PdfPages
 import pandas as pd
 import time
 
+from rpi_gyro_reader.transformers.cursor_movers.kalman_mover import KalmanMover
+from rpi_gyro_reader.transformers.madgwick_transformer import MadgwickTransformer
+
 def main():
-    imu = AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
+    imu = AccelCircleIMU(radius=0.1, freq=0.5, shift=np.pi/2) # IMUReceiver(address="localhost")
     av_trans = AVTransformer(alpha=0.9)
+    madg_trans = MadgwickTransformer()
     vel_mover = AccVelocityMover(dt=1.0, alpha=0.9, threshold=0.05)
+    kalman_mover = KalmanMover(dt=1.0, alpha=0.9)
 
     accs = []
     deltas = []
     positions = []
 
-    delta_pix = 1
+    delta_pix = 0.1
     cursor_path_file_name = "cursor_path.pdf"
 
     accs_file_name = "cursor_accs.csv"
@@ -31,13 +36,16 @@ def main():
     print ("Starting cursor path plotting test...")
     while True:
         try:
-            vec = imu.read_accel()
-            #FIXME: something odd is happening with AVTransformer
-            # vec = av_trans.transform_sample(np.asanyarray(vec)) 
+            vec = imu.read_motion()
+            vec[2] = np.random.normal(0, 1.0) # Add noise to Z accel
+        
+            vec = madg_trans.transform_sample(vec)
+
             accs.append(vec[0:2])
             delta = vel_mover.transform_sample(vec)
+            # delta = kalman_mover.transform_sample(vec)
             delta*=delta_pix
-            pyautogui.moveRel(delta[0], delta[1], duration=0.001)
+            # pyautogui.moveRel(delta[0], delta[1], duration=0.001)
             time.sleep(0.01)
             last_pos += delta
             deltas.append(delta.copy())
@@ -61,6 +69,7 @@ def main():
         plt.plot(accs[:,0], label="X accel")
         plt.plot(accs[:,1], label="Y accel")
         plt.legend()
+
 
         plt.subplot(1,3,2)
         plt.plot(positions[:,0],positions[:,1], label="Cursor Path in pixels")

@@ -8,17 +8,18 @@ import numpy as np
 class AccelCircleIMU(IMU):
     """Simulates a moving IMU for testing"""
 
-    def __init__(self, dt=0.01, radius=1.0, freq=0.2):
+    def __init__(self, dt=0.01, radius=1.0, freq=0.2, shift=0.0):
         self.t = 0.0
         self.dt = dt
         self.radius = radius
         self.freq = freq
+        self.shift = shift
 
     def read_accel(self):
         omega = 2 * math.pi * self.freq
 
-        ax = -(omega**2) * self.radius * np.cos(omega * self.t)
-        ay = -(omega**2) * self.radius * np.sin(omega * self.t)
+        ax = -(omega**2) * self.radius * np.cos(omega * self.t + self.shift)
+        ay = -(omega**2) * self.radius * np.sin(omega * self.t + self.shift)
         az = 0
 
         self.t += self.dt
