@@ -25,15 +25,17 @@ class KalmanMover(CursorMover):
         
         self.H = np.array([
             [0, 0, 1, 0],
-            [0, 0, 0, 1]
+            [0, 0, 0, 1],
+            [1, 0, 0, 0],#Pseudo-measurement to keep velocity in check
+            [0, 1, 0, 0],
         ])
 
         qv = 1e-4
         qa = 1e-3
         self.Q = np.diag([qv, qv, qa, qa])
 
-        r = 1e-1
-        self.R = np.diag([r, r])
+        r = 1e-2
+        self.R = np.diag([r, r, r, r])
 
         self.I = np.eye(4)
 
@@ -42,7 +44,7 @@ class KalmanMover(CursorMover):
         self.P = self.F @ self.P @ self.F.T + self.Q
 
     def _update(self, ax_meas, ay_meas):
-        z = np.array([[ax_meas], [ay_meas]])
+        z = np.array([[ax_meas], [ay_meas], [0], [0]])  # Pseudo-measurement for velocity
         y = z - self.H @ self.x
         S = self.H @ self.P @ self.H.T + self.R
         K = self.P @ self.H.T @ np.linalg.inv(S)

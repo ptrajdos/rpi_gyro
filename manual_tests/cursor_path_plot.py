@@ -14,7 +14,7 @@ from rpi_gyro_reader.transformers.cursor_movers.kalman_mover import KalmanMover
 from rpi_gyro_reader.transformers.madgwick_transformer import MadgwickTransformer
 
 def main():
-    imu = AccelCircleIMU(radius=0.1, freq=0.5, shift=np.pi/2) # IMUReceiver(address="localhost")
+    imu = AccelCircleIMU(radius=0.1, freq=0.5, shift=np.pi/3) # IMUReceiver(address="localhost")
     av_trans = AVTransformer(alpha=0.9)
     madg_trans = MadgwickTransformer()
     vel_mover = AccVelocityMover(dt=1.0, alpha=0.9, threshold=0.05)
@@ -41,9 +41,10 @@ def main():
         
             vec = madg_trans.transform_sample(vec)
 
+
             accs.append(vec[0:2])
-            delta = vel_mover.transform_sample(vec)
-            # delta = kalman_mover.transform_sample(vec)
+            # delta = vel_mover.transform_sample(vec)
+            delta = kalman_mover.transform_sample(vec)
             delta*=delta_pix
             # pyautogui.moveRel(delta[0], delta[1], duration=0.001)
             time.sleep(0.01)
@@ -65,6 +66,7 @@ def main():
 
     print("Plotting results...")    
     with PdfPages(cursor_path_file_name) as pdf:
+        plt.figure(figsize=(12, 12))
         plt.subplot(1,3,1)
         plt.plot(accs[:,0], label="X accel")
         plt.plot(accs[:,1], label="Y accel")
