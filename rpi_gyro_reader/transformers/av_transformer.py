@@ -13,8 +13,8 @@ class AVTransformer(ITransformer):
 
         self.corrections = None
 
-    def fit(self, X):
-        return super().fit(X)
+    def fit(self, X, y=None):
+        return super().fit(X, y)
 
 
     def transform_sample(self, vec):

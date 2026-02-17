@@ -38,5 +38,5 @@ class MadgwickTransformer(ITransformer):
         self.magdwick = Madgwick()
         self.q = np.array([1.0, 0.0, 0.0, 0.0])
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self

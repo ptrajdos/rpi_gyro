@@ -9,5 +9,5 @@ class PassTransformer(ITransformer):
     def reset(self):
         pass
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self

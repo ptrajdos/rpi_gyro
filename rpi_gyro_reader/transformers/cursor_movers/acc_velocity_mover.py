@@ -23,5 +23,5 @@ class AccVelocityMover(CursorMover):
 
         return delta
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self

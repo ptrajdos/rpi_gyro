@@ -11,8 +11,8 @@ class DiffTransformer(ITransformer):
 
         self.last_vec = None
 
-    def fit(self, X):
-        return super().fit(X)
+    def fit(self, X, y=None):
+        return super().fit(X,y)
 
     def transform_sample(self, vec):
         if self.last_vec is None:
