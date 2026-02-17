@@ -21,12 +21,13 @@ MAX_POINTS = 200
 UPDATE_MS = 10
 W,H = 300,300
 
-imu = IMUReceiver(address="raspberry") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
+imu = AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
 madg_trans = MadgwickTransformer()
 vel_mover = AccVelocityMover(dt=1.0, alpha=0.7, threshold=0.4)
 kalman_mover = KalmanMover(dt=1.0, alpha=0.9)
-delta_pix = 0.005
+
+delta_pix = 1
 
 def generate_sample():
     v = imu.read_motion()

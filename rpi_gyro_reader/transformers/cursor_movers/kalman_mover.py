@@ -1,68 +1,49 @@
 import numpy as np
 from rpi_gyro_reader.transformers.cursor_movers.icursormover import CursorMover
-
+from filterpy.kalman import KalmanFilter
 
 class KalmanMover(CursorMover):
-    def __init__(self, dt=0.01, alpha=0.95):
+    def __init__(self, dt=0.01, alpha=0.90,sigma_v=1e-3, sigma_a=1e-1, sigma_r=1, threshold=0.05):
         super().__init__()
         self.dt = dt
         self.alpha = alpha
+        self.threshold = threshold
+        self.sigma_v = sigma_v
+        self.sigma_a = sigma_a
+        self.sigma_r = sigma_r
         self.reset()
         
-        
-
     def reset(self):
-        self.x = np.zeros((4, 1))  # state: vx, vy, ax, ay
-        self.P = np.eye(4)
+        self.kf = KalmanFilter(dim_x=4, dim_z=2)
 
         
-        self.F = np.array([
-            [1, 0, self.dt, 0],
-            [0, 1, 0, self.dt],
+        self.kf.F = np.array([
+            [self.alpha, 0, self.dt, 0],
+            [0, self.alpha, 0, self.dt],
             [0, 0, 1,  0],
             [0, 0, 0,  1],
         ])
         
-        self.H = np.array([
+        self.kf.H = np.array([ # type: ignore
             [0, 0, 1, 0],
             [0, 0, 0, 1],
-            [1, 0, 0, 0],#Pseudo-measurement to keep velocity in check
-            [0, 1, 0, 0],
         ])
 
-        qv = 1e-4
-        qa = 1e-3
-        self.Q = np.diag([qv, qv, qa, qa])
+        self.kf.Q = np.diag([self.sigma_v, self.sigma_v, self.sigma_a, self.sigma_a])
 
-        r = 1e-2
-        self.R = np.diag([r, r, r, r])
+        self.kf.R = np.diag([self.sigma_r, self.sigma_r])
 
-        self.I = np.eye(4)
-
-    def _predict(self):
-        self.x = self.F @ self.x
-        self.P = self.F @ self.P @ self.F.T + self.Q
-
-    def _update(self, ax_meas, ay_meas):
-        z = np.array([[ax_meas], [ay_meas], [0], [0]])  # Pseudo-measurement for velocity
-        y = z - self.H @ self.x
-        S = self.H @ self.P @ self.H.T + self.R
-        K = self.P @ self.H.T @ np.linalg.inv(S)
-        self.x = self.x + K @ y
-        self.P = (self.I - K @ self.H) @ self.P
-
-    def _step(self, ax_meas, ay_meas):
-        self._predict()
-        self._update(ax_meas, ay_meas)
-        return self.x.flatten()  #vx, vy, ax, ay
 
     def transform_sample(self, vec):
-        ax, ay = vec[0], vec[1]
-        state = self._step(ax, ay)
-        delta = state[0:2] * self.dt  # Use velocity for movement
-        delta *= self.alpha
+        z = np.array((vec[0], vec[1]))
+        nm = np.abs(z) < self.threshold
+        z[nm] = 0.0  # type: ignore
 
-        return delta
+        self.kf.predict()
+        self.kf.update(z)
+        delta = self.kf.x[0:2] * self.dt
+        
+        return delta.flatten()
 
     def fit(self, X, y=None):
         return self

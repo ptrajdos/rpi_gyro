@@ -1,5 +1,6 @@
 import numpy as np
 from rpi_gyro_reader.gyro.accel_circle_imu import AccelCircleIMU
+from rpi_gyro_reader.gyro.accel_lissajous_imu import AccelLissajousIMU
 from rpi_gyro_reader.gyro.imu_receiver import IMUReceiver
 from rpi_gyro_reader.transformers.av_transformer import AVTransformer
 from rpi_gyro_reader.transformers.cursor_movers.acc_velocity_mover import AccVelocityMover
@@ -14,17 +15,17 @@ from rpi_gyro_reader.transformers.cursor_movers.kalman_mover import KalmanMover
 from rpi_gyro_reader.transformers.madgwick_transformer import MadgwickTransformer
 
 def main():
-    imu = AccelCircleIMU(radius=0.1, freq=0.5, shift=np.pi/3) # IMUReceiver(address="localhost")
+    imu = AccelLissajousIMU(dt=0.1,A=1.0, B=1.0,wx=1,wy=1,shift=np.pi/2.0) # IMUReceiver(address="localhost")
     av_trans = AVTransformer(alpha=0.9)
     madg_trans = MadgwickTransformer()
     vel_mover = AccVelocityMover(dt=1.0, alpha=0.9, threshold=0.05)
-    kalman_mover = KalmanMover(dt=1.0, alpha=0.9)
+    kalman_mover = KalmanMover(dt=1.0, alpha=0.9,threshold=0.01,sigma_r=1)
 
     accs = []
     deltas = []
     positions = []
 
-    delta_pix = 0.1
+    delta_pix = 1
     cursor_path_file_name = "cursor_path.pdf"
 
     accs_file_name = "cursor_accs.csv"
@@ -37,6 +38,7 @@ def main():
     while True:
         try:
             vec = imu.read_motion()
+            # vec[1] = 0.0
             vec[2] = np.random.normal(0, 1.0) # Add noise to Z accel
         
             vec = madg_trans.transform_sample(vec)
