@@ -20,15 +20,15 @@ UPDATE_MS = 10
 
 imu = IMUReceiver(address="raspberry") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
-madg_trans = MadgwickTransformer()
+madg_trans = MadgwickTransformer(return_body_frame=True)
 
 def generate_sample():
     v = imu.read_motion()
     # v = av_trans.transform_sample(np.asanyarray(v))
-    v = madg_trans.transform_sample(v)
+    # v = madg_trans.transform_sample(v)
     return v
 
-y_limits = (-10,10)
+y_limits = (-20,20)
 
 class RealtimePlotApp:
     def __init__(self, root):

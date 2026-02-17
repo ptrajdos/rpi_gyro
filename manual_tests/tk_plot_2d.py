@@ -11,6 +11,7 @@ from rpi_gyro_reader.gyro.imu_receiver import IMUReceiver
 from rpi_gyro_reader.transformers.av_transformer import AVTransformer
 from rpi_gyro_reader.transformers.cursor_movers.acc_velocity_mover import AccVelocityMover
 from rpi_gyro_reader.transformers.cursor_movers.kalman_mover import KalmanMover
+from rpi_gyro_reader.transformers.cursor_movers.kalman_mover_vel import KalmanMoverVel
 from rpi_gyro_reader.transformers.madgwick_transformer import MadgwickTransformer
 matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -21,17 +22,19 @@ MAX_POINTS = 200
 UPDATE_MS = 10
 W,H = 300,300
 
-imu = AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
+imu = IMUReceiver(address="raspberry") #AccelCircleIMU(radius=0.1, freq=0.5) # IMUReceiver(address="localhost")
 av_trans = AVTransformer(alpha=0.9)
 madg_trans = MadgwickTransformer()
 vel_mover = AccVelocityMover(dt=1.0, alpha=0.7, threshold=0.4)
-kalman_mover = KalmanMover(dt=1.0, alpha=0.9)
+# kalman_mover = KalmanMover(dt=1.0, alpha=0.9)
+kalman_mover = KalmanMoverVel(dt=1.0, alpha=0.5, sensitivity=0.05, threshold=5 )
 
 delta_pix = 1
 
 def generate_sample():
     v = imu.read_motion()
-    v = av_trans.transform_sample(np.asanyarray(v))
+    print(f"imu: {v}")
+    # v = av_trans.transform_sample(np.asanyarray(v))
     # v = madg_trans.transform_sample(v)
     # delta = vel_mover.transform_sample(np.asanyarray(v))
     delta = kalman_mover.transform_sample(np.asanyarray(v))

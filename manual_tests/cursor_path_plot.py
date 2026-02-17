@@ -12,6 +12,7 @@ import pandas as pd
 import time
 
 from rpi_gyro_reader.transformers.cursor_movers.kalman_mover import KalmanMover
+from rpi_gyro_reader.transformers.cursor_movers.kalman_mover_vel import KalmanMoverVel
 from rpi_gyro_reader.transformers.madgwick_transformer import MadgwickTransformer
 
 def main():
@@ -19,7 +20,8 @@ def main():
     av_trans = AVTransformer(alpha=0.9)
     madg_trans = MadgwickTransformer()
     vel_mover = AccVelocityMover(dt=1.0, alpha=0.9, threshold=0.05)
-    kalman_mover = KalmanMover(dt=1.0, alpha=0.9,threshold=0.01,sigma_r=1)
+    # kalman_mover = KalmanMover(dt=1.0, alpha=0.9,threshold=0.01,sigma_r=1)
+    kalman_mover = KalmanMoverVel(dt=1.0, alpha=0.8,threshold=1.0,sigma_r=1, sensitivity=0.01)
 
     accs = []
     deltas = []
@@ -38,13 +40,14 @@ def main():
     while True:
         try:
             vec = imu.read_motion()
+            vec[3:6] = vec[0:3]
             # vec[1] = 0.0
-            vec[2] = np.random.normal(0, 1.0) # Add noise to Z accel
+            # vec[2] = np.random.normal(0, 1.0) # Add noise to Z accel
         
-            vec = madg_trans.transform_sample(vec)
+            # vec = madg_trans.transform_sample(vec)
 
 
-            accs.append(vec[0:2])
+            accs.append(vec[3:5])
             # delta = vel_mover.transform_sample(vec)
             delta = kalman_mover.transform_sample(vec)
             delta*=delta_pix
